@@ -8,4 +8,5 @@ add_executable(ray_tracing_the_next_week main.cpp
         bvh.h
         texture.h
         rtw_stb_image.h
-        perlin.h)
+        perlin.h
+        quad.h)
