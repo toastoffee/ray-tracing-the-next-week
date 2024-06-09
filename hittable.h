@@ -111,7 +111,36 @@ public:
     }
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
-        ...
+        // Change the ray from world space to object space
+        auto origin = r.origin();
+        auto direction = r.direction();
+
+        origin[0] = cos_theta*r.origin()[0] - sin_theta*r.origin()[2];
+        origin[2] = sin_theta*r.origin()[0] + cos_theta*r.origin()[2];
+
+        direction[0] = cos_theta*r.direction()[0] - sin_theta*r.direction()[2];
+        direction[2] = sin_theta*r.direction()[0] + cos_theta*r.direction()[2];
+
+        ray rotated_r(origin, direction, r.time());
+
+        // Determine whether an intersection exists in object space (and if so, where)
+        if (!object->hit(rotated_r, ray_t, rec))
+            return false;
+
+        // Change the intersection point from object space to world space
+        auto p = rec.p;
+        p[0] =  cos_theta*rec.p[0] + sin_theta*rec.p[2];
+        p[2] = -sin_theta*rec.p[0] + cos_theta*rec.p[2];
+
+        // Change the normal from object space to world space
+        auto normal = rec.normal;
+        normal[0] =  cos_theta*rec.normal[0] + sin_theta*rec.normal[2];
+        normal[2] = -sin_theta*rec.normal[0] + cos_theta*rec.normal[2];
+
+        rec.p = p;
+        rec.normal = normal;
+
+        return true;
     }
 
     aabb bounding_box() const override { return bbox; }
