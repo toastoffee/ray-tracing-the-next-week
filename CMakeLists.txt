@@ -9,4 +9,5 @@ add_executable(ray_tracing_the_next_week main.cpp
         texture.h
         rtw_stb_image.h
         perlin.h
-        quad.h)
+        quad.h
+        constant_medium.h)
